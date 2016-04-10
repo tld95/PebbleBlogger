@@ -30,35 +30,33 @@
 			var ampm = hours >= 12 ? 'pm' : 'am';
 			hours = hours % 12;
 			hours = hours ? hours : 12;
-			minutes = minutes < 10 ? minutes : minutes;
+			minutes = minutes < 10 ? '0'+minutes : minutes;
 
 			var formatted = hours + ':' + minutes + ' ' + ampm;		
 		
 			textArea.value += (formatted+", "+msg +"\n");			
 		}
-
-		lambda.invoke({
-			FunctionName: "websiteRead",
-			Payload: JSON.stringify({})
-			}, function(err, data) {
-		  		if(!err) {
-					textArea.value = "";
-					console.log(data);
-					var items = JSON.parse(data["Payload"]);
-					console.log(items);
-					for (var i = 0; i < items.length; i++) {
-						var elm = items[i];
-						log(elm.message,elm.timestamp);
-						console.log(elm.message);
-					}
-				} else {
-				  console.log(err);
-				}
-		});	
 	
 		window.setTimeout(function() {
-			location.reload();
-		}, 5000);				
+			lambda.invoke({
+				FunctionName: "websiteRead",
+				Payload: JSON.stringify({})
+				}, function(err, data) {
+			  		if(!err) {
+						textArea.value = "";
+						console.log(data);
+						var items = JSON.parse(data["Payload"]);
+						console.log(items);
+						for (var i = 0; i < items.length; i++) {
+							var elm = items[i];
+							log(elm.message,elm.timestamp);
+							console.log(elm.message);
+						}
+					} else {
+					  console.log(err);
+					}
+				});
+		}, 100);					
 	</script>
 </body>
 </html>
