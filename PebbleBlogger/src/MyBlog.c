@@ -5,8 +5,6 @@ static DictationSession *dict;
 static DictionaryIterator *itr;
 static Window *window;
 
-static void timer_handler(void *context) {
-}
 
 static void outbox_failed_callback(DictionaryIterator *iterator, AppMessageResult reason, void *context) {
   APP_LOG(APP_LOG_LEVEL_ERROR, "Outbox send failed!");
@@ -27,11 +25,9 @@ static void dictation_session_callback(DictationSession *session, DictationSessi
 	}
 }
 
-static void window_load(Window *window) {
-}
+static void window_load(Window *window) {}
 
-static void window_unload(Window *window) {
-}
+static void window_unload(Window *window) {}
 
 static void init(void) {
 	window = window_create();

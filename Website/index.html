@@ -1,0 +1,62 @@
+<html>
+<head>	
+	<title> Pebble Blog </title>
+	 <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.28.min.js"></script>
+</head>
+
+<body>
+	<script>
+	  	AWS.config.region = 'us-east-1';
+	  	AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+	    IdentityPoolId: 'us-east-1:ef6ce1c8-afb8-4bd8-b474-a61ba88c3aab'
+	  });
+	  var lambda = new AWS.Lambda();
+	</script>
+
+	<h1> IOT Pebble Blog! Bitcamp 2016 </h1>
+	<h2> Latest Posts: </h2>
+
+	<textarea word-break:break-word text-wrap:unrestricted id="text" cols="100" rows="10" disabled>
+	</textarea>
+
+	<script>
+		var textArea = document.getElementById("text");
+		
+		function log(msg, timestamp) {
+			var date = new Date(timestamp*1000);
+			var hours = date.getHours();
+			var minutes = "0" + date.getMinutes();
+			var seconds = "0" + date.getSeconds();
+			var ampm = hours >= 12 ? 'pm' : 'am';
+			hours = hours % 12;
+			hours = hours ? hours : 12;
+			minutes = minutes < 10 ? '0'+minutes : minutes;
+
+			var formatted = hours + ':' + minutes + ' ' + ampm;		
+		
+			textArea.value += (formatted+", "+msg +"\n");			
+		}
+	
+		window.setTimeout(function() {
+			lambda.invoke({
+				FunctionName: "websiteRead",
+				Payload: JSON.stringify({})
+				}, function(err, data) {
+			  		if(!err) {
+						textArea.value = "";
+						console.log(data);
+						var items = JSON.parse(data["Payload"]);
+						console.log(items);
+						for (var i = 0; i < items.length; i++) {
+							var elm = items[i];
+							log(elm.message,elm.timestamp);
+							console.log(elm.message);
+						}
+					} else {
+					  console.log(err);
+					}
+				});
+		}, 100);					
+	</script>
+</body>
+</html>
